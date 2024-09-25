@@ -52,7 +52,7 @@ async def http_attack(target, proxy=None, method="GET", headers=None, success_co
                             success_counter[0] += 1  # زيادة العداد
 
             except Exception as e:
-                print(f"{Fore.RED}[ ! ] An error occurred: {str(e)}{Style.RESET_ALL}")
+    print(f"{Fore.RED}[ ! ] An error occurred with proxy {proxy}: {str(e)}{Style.RESET_ALL}")
                 if failure_counter is not None:
                     failure_counter[0] += 1  # زيادة العداد للفشل
             await asyncio.sleep(0.1)  # تأخير بين الطلبات لتقليل الضغط
