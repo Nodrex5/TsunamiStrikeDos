@@ -34,4 +34,5 @@ def listMethod():
         print(f'{F.RED} Error! Choice 1 or 2 or 3 just!!')
         exit()
 
+listMethod()
 
