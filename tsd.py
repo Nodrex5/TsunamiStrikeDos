@@ -25,11 +25,11 @@ def listMethod():
     choiceMethod = (int(input(f'{F.CYAN}[⚡] {F.RESET}Choice Method >> {F.GREEN}')))
 
     if choiceMethod == 1:
-        os.system('cmd /k "python tsd-http-proxies.py"' if os.name == 'nt' else 'python tsd-http-proxies.py')
+        os.system('cmd /k "python3 tools/tsd-http-proxies.py"' if os.name == 'nt' else 'python3 tools/tsd-http-proxies.py')
     elif choiceMethod ==2:
-        os.system('cmd /k "python tsd-udp.py"' if os.name == 'nt' else 'python tsd-udp.py')
+        os.system('cmd /k "python3 tools/tsd-udp.py"' if os.name == 'nt' else 'python3 tools/tsd-udp.py')
     elif choiceMethod == 3:
-        os.system('cmd /k "tsd-dns.py"' if os.name == 'nt' else 'python tsd-dns.py')
+        os.system('cmd /k "python3 tools/tsd-dns.py"' if os.name == 'nt' else 'python3 tools/tsd-dns.py')
     else:
         print(f'{F.RED} Error! Choice 1 or 2 or 3 just!!')
         exit()
