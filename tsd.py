@@ -1,6 +1,6 @@
 from colorama import Fore as F
 import os
-
+os.system('clear')
 print(f'''
 {F.GREEN}
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
