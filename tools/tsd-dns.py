@@ -4,7 +4,10 @@ import threading
 from colorama import Fore as F
 from concurrent.futures import ThreadPoolExecutor
 import time
+import os
 
+
+os.system('clear')
 print(f'''
 {F.GREEN}
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
