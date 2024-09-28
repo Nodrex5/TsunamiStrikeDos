@@ -11,6 +11,9 @@ import faker
 from colorama import Fore as F
 from requests.exceptions import ConnectionError, Timeout
 from fake_useragent import UserAgent
+import os
+
+os.system('clear')
 
 # --------------------------------------
 
