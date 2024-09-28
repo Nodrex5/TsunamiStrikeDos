@@ -9,7 +9,7 @@ print(f'''
 ⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                {F.CYAN} TsunamiStrikeDos {F.GREEN}V 3.1 {F.RESET}
+                {F.CYAN} TsunamiStrikeDos {F.GREEN}V 3.2.1 {F.RESET}
                 {F.WHITE} MAIN PAGE {F.RESET}
 ''')
 
@@ -31,8 +31,7 @@ def listMethod():
     elif choiceMethod == 3:
         os.system('cmd /k "python3 tools/tsd-dns.py"' if os.name == 'nt' else 'python3 tools/tsd-dns.py')
     else:
-        print(f'{F.RED} Error! Choice 1 or 2 or 3 just!!')
+        print(f'{F.RED}[ !!! ] {F.RESET}Error! Choice {F.CYAN}1{F.RESET} or {F.CYAN}2{F.RESET} or {F.CYAN}3{F.RESET} just!!')
         exit()
 
 listMethod()
-
