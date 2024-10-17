@@ -1,6 +1,13 @@
 from colorama import Fore as F
 import os
+from halo import Halo
+
 os.system('clear')
+
+
+
+__version__ = '4.0.4'
+
 print(f'''
 {F.GREEN}
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -9,20 +16,20 @@ print(f'''
 ⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                {F.CYAN} TsunamiStrikeDos {F.GREEN}V 3.2.1 {F.RESET}
+                {F.CYAN} TsunamiStrikeDos {F.GREEN}V 4.0.4 {F.RESET}
                 {F.WHITE} MAIN PAGE {F.RESET}
 ''')
 
-
+print(F.WHITE+'_'*40)
 def listMethod():
 
     print(f'''
-1- HTTP-PROXIES.
-2- UDP.
-3- DNS
+{F.GREEN}1- {F.RESET}HTTP-PROXIES.
+{F.GREEN}2- {F.RESET}UDP.
+{F.GREEN}3- {F.RESET}DNS.
 ''')
 
-    choiceMethod = (int(input(f'{F.CYAN}[⚡] {F.RESET}Choice Method >> {F.GREEN}')))
+    choiceMethod = (int(input(f'{F.GREEN}(⚡) {F.RESET}Choice Method >> {F.GREEN}')))
 
     if choiceMethod == 1:
         os.system('cmd /k "python3 tools/tsd-http-proxies.py"' if os.name == 'nt' else 'python3 tools/tsd-http-proxies.py')
