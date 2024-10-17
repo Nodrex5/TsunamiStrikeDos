@@ -162,7 +162,7 @@ def start_flooding(target: str, thread_count: int, duration: int) -> None:
         thread.start()
 
     while time.time() < stop_time:
-        time.sleep(duration)  # Keep the main thread alive until duration ends
+        time.sleep(1)  # Keep the main thread alive until duration ends
 
     print(f"\n{F.CYAN}( DONE ) {F.GREEN}Attac finished after {duration} seconds.{F.RESET}")
 
