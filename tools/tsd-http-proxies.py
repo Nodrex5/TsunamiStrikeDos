@@ -146,7 +146,7 @@ def flood(target: str) -> None:
             payload_size = f"{F.GREEN} Data Size: {F.CYAN}{round(len(response.content)/1024, 2):>6} KB"
             proxy_addr = f"| {F.GREEN}Proxy: {F.CYAN}{proxy['http']:>21}"
             ip_fake = f"IP: {headers['X-Forwarded-For']}"
-            print(f"{status}:Request Sent! --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
+            print(f"{status}: Request Sent! --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
             if response.status_code != 200:
                 try:
                     proxies.remove(proxy)
