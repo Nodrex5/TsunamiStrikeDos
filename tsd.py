@@ -6,7 +6,7 @@ os.system('clear')
 
 
 
-__version__ = '4.0.6 BETA'
+__version__ = '4.0.9 BETA'
 __author__ = "AlMu7mdy"
 
 print(f'''
