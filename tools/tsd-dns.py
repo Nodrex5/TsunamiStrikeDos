@@ -4,6 +4,10 @@ import threading
 import time
 import string
 from colorama import Fore as F
+import os
+
+
+os.system('clear')
 
 from concurrent.futures import ThreadPoolExecutor
 
