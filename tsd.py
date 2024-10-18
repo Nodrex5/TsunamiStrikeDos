@@ -6,7 +6,8 @@ os.system('clear')
 
 
 
-__version__ = '4.0.4'
+__version__ = '4.0.5 BETA'
+__author__ = "AlMu7mdy"
 
 print(f'''
 {F.GREEN}
@@ -16,8 +17,8 @@ print(f'''
 ⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                {F.CYAN} TsunamiStrikeDos {F.GREEN}V 4.0.4 {F.RESET}
-                {F.WHITE} MAIN PAGE {F.RESET}
+                {F.CYAN} TsunamiStrikeDos V{F.GREEN} {__version__}{F.RESET}
+                {F.WHITE}By {F.GREEN}{__author__}{F.RESET}
 ''')
 
 print(F.WHITE+'_'*40)
@@ -29,7 +30,7 @@ def listMethod():
 {F.GREEN}3- {F.RESET}DNS.
 ''')
 
-    choiceMethod = (int(input(f'{F.GREEN}(⚡) {F.RESET}Choice Method >> {F.GREEN}')))
+    choiceMethod = (int(input(f'{F.GREEN}(⚡) {F.RESET}Choice Method ~#{F.GREEN}')))
 
     if choiceMethod == 1:
         os.system('cmd /k "python3 tools/tsd-http-proxies.py"' if os.name == 'nt' else 'python3 tools/tsd-http-proxies.py')
