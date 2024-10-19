@@ -1,3 +1,4 @@
-aiohttp
-fake-useragent
+faker
 colorama
+fake_useragent
+halo
