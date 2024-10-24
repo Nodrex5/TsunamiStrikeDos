@@ -4,6 +4,9 @@ import threading
 from faker import Faker
 from colorama import Fore
 import time
+import os
+
+os.system('clear')
 
 # Initialize Faker
 fake = Faker()
