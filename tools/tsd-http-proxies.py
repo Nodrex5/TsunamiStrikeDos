@@ -231,7 +231,7 @@ if __name__ == "__main__":
 └──╼ {F.YELLOW}~: {F.GREEN}'''))
     duration = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Time Attack{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}\'''))
-    sleeptime = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Sleep Time{F.CYAN})
+    sleeptime = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW})~ Sleep Time{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}'''))
 
     start_flooding(target_url, num_threads, duration)
