@@ -225,14 +225,14 @@ def start_flooding(target: str, thread_count: int, duration: int) -> None:
     print(f"\n{F.CYAN}( DONE ) {F.GREEN}Attack finished after {duration} seconds.{F.RESET}")
 
 if __name__ == "__main__":
-    target_url = input(f'''{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Enter Url{F.CYAN})
+    target_url = input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Enter Url{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}\n''')
-    num_threads = int(input(f'''{F. CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Threads{F.CYAN})
-└──╼ {F.YELLOW}~: {F.GREEN}\n'''))
-    duration = int(input(f'''{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Time Attack{F.CYAN})
-└──╼ {F.YELLOW}~: {F.GREEN}\n'''))
-    sleeptime = int(input(f'''{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Sleep Time{F.CYAN})
-└──╼ {F.YELLOW}~: {F.GREEN}\n'''))
+    num_threads = int(input(f'''\n{F. CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Threads{F.CYAN})
+└──╼ {F.YELLOW}~: {F.GREEN}'''))
+    duration = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Time Attack{F.CYAN})
+└──╼ {F.YELLOW}~: {F.GREEN}\'''))
+    sleeptime = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Sleep Time{F.CYAN})
+└──╼ {F.YELLOW}~: {F.GREEN}'''))
 
     start_flooding(target_url, num_threads, duration)
 
