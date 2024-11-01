@@ -143,7 +143,7 @@ def flood(target: str) -> None:
             if type_request == "GET":
                 response = requests.get(target, headers=headers, params=paramsGet ,proxies=proxy, timeout=5)
             else:
-                response = requests.post(target, data=paramsGet,headers=headers,proxies=proxy, timeout=5)
+                response = requests.post(target, json=paramsGet,headers=headers,proxies=proxy, timeout=5)
             status = f"{F.GREEN if response.status_code == 200 else F.RED}({response.status_code}){F.RESET}"
             payload_size = f"{F.GREEN} Data Size: {F.CYAN}{round(len(response.content)/1024, 2):>6} KB"
             proxy_addr = f"| {F.GREEN}Proxy: {F.CYAN}{proxy['http']:>21}"
