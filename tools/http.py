@@ -16,6 +16,7 @@ from halo import Halo
 
 os.system('clear')
 
+
 version = "5.8 ( 2024 - 12 - 14 )"
 method = "HTTP"
 
